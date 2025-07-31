@@ -58,8 +58,8 @@ flutter:
   uses-material-design: true
 
   assets:
-  - assets/data/oshikwanyama_data.json
-  - assets/audio/
+    - assets/data/oshikwanyama_data.json
+    - assets/audio/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

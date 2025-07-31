@@ -41,6 +41,9 @@ class _MyAppState extends State<MyApp> {
                   setState(() {
                     translation = result?.oshikwanyama ?? "Not found";
                   });
+                  //delete when finished
+                  print ("Input: ${controller.text}");
+                  print("Result: ${result?.english} -> ${result?.oshikwanyama}");
                 },
                 child: Text("Translate"),
               ),
