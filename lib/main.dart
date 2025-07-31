@@ -1,58 +1,24 @@
 import 'package:flutter/material.dart';
-import 'viewmodels/phrases_vm.dart';
+import 'views/splash_screen.dart'; // ✅ Adjust this path if needed
 
 void main() {
-  runApp(MyApp());
+  runApp(const OshiwamboTranslatorApp());
 }
 
-class MyApp extends StatefulWidget {
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  final PhraseViewModel viewModel = PhraseViewModel();
-  final TextEditingController controller = TextEditingController();
-  String translation = "";
-
-  @override
-  void initState() {
-    super.initState();
-    viewModel.loadPhrases();
-  }
+class OshiwamboTranslatorApp extends StatelessWidget {
+  const OshiwamboTranslatorApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text("Oshiwambo Translator")),
-        body: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            children: [
-              TextField(
-                controller: controller,
-                decoration: InputDecoration(labelText: "Enter English phrase"),
-              ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  final result = viewModel.search(controller.text);
-                  setState(() {
-                    translation = result?.oshikwanyama ?? "Not found";
-                  });
-                  //delete when finished
-                  print ("Input: ${controller.text}");
-                  print("Result: ${result?.english} -> ${result?.oshikwanyama}");
-                },
-                child: Text("Translate"),
-              ),
-              SizedBox(height: 20),
-              Text("Translation: $translation"),
-            ],
-          ),
-        ),
+      title: 'Oshiwambo Translator',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.pink,
+        scaffoldBackgroundColor: Colors.white,
+        fontFamily: 'Roboto', // Optional: set default font
       ),
+      home: const SplashScreen(), // ✅ Starts with splash screen
     );
   }
 }

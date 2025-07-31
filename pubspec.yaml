@@ -60,6 +60,7 @@ flutter:
   assets:
     - assets/data/oshikwanyama_data.json
     - assets/audio/
+    - assets/images/sun.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
