@@ -1,0 +1,555 @@
+
+[
+    {
+        "english": "What's your name?",
+        "oshikwanyama": "Ovelye lye?",
+        "category": "phrases",
+        "audio_file": "whats_your_name.wav"
+    },
+    {
+        "english": "One",
+        "oshikwanyama": "Imwe",
+        "category": "numbers",
+        "audio_file": "one.wav"
+    },
+    {
+        "english": "Two",
+        "oshikwanyama": "Mbali",
+        "category": "numbers",
+        "audio_file": "two.wav"
+    },
+    {
+        "english": "Three",
+        "oshikwanyama": "Nhatu",
+        "category": "numbers",
+        "audio_file": "three.wav"
+    },
+    {
+        "english": "Four",
+        "oshikwanyama": "Nhee",
+        "category": "numbers",
+        "audio_file": "four.wav"
+    },
+    {
+        "english": "Five",
+        "oshikwanyama": "Nhano",
+        "category": "numbers",
+        "audio_file": "five.wav"
+    },
+    {
+        "english": "Six",
+        "oshikwanyama": "Hamano",
+        "category": "numbers",
+        "audio_file": "six.wav"
+    },
+    {
+        "english": "Seven",
+        "oshikwanyama": "Heyali",
+        "category": "numbers",
+        "audio_file": "seven.wav"
+    },
+    {
+        "english": "Eight",
+        "oshikwanyama": "Hetatu",
+        "category": "numbers",
+        "audio_file": "eight.wav"
+    },
+    {
+        "english": "Nine",
+        "oshikwanyama": "Omugoyi",
+        "category": "numbers",
+        "audio_file": "nine.wav"
+    },
+    {
+        "english": "Ten",
+        "oshikwanyama": "Omulongo",
+        "category": "numbers",
+        "audio_file": "ten.wav"
+    },
+    {
+        "english": "How are you",
+        "oshikwanyama": "Ongeipi",
+        "category": "phrases",
+        "audio_file": "how_are_you.wav"
+    },
+    {
+        "english": "This is",
+        "oshikwanyama": "Aame",
+        "category": "phrases",
+        "audio_file": "this_is.wav"
+    },
+    {
+        "english": "Crocodile",
+        "oshikwanyama": "Ongadu",
+        "category": "words",
+        "audio_file": "crocodile.wav"
+    },
+    {
+        "english": "Where is?",
+        "oshikwanyama": "Ouli peni?",
+        "category": "phrases",
+        "audio_file": "where_is.wav"
+    },
+    {
+        "english": "I don't know",
+        "oshikwanyama": "Kandishishi",
+        "category": "phrases",
+        "audio_file": "i_dont_know.wav"
+    },
+    {
+        "english": "Plate",
+        "oshikwanyama": "Okayaha",
+        "category": "words",
+        "audio_file": "plate.wav"
+    },
+    {
+        "english": "Knife",
+        "oshikwanyama": "Ombele",
+        "category": "words",
+        "audio_file": "knife.wav"
+    },
+    {
+        "english": "I don't",
+        "oshikwanyama": "Ihandi",
+        "category": "phrases",
+        "audio_file": "i_dont.wav"
+    },
+    {
+        "english": "Water",
+        "oshikwanyama": "Omeya",
+        "category": "words",
+        "audio_file": "water.wav"
+    },
+    {
+        "english": "I am looking for",
+        "oshikwanyama": "Andi kongo",
+        "category": "phrases",
+        "audio_file": "i_am_looking_for.wav"
+    },
+    {
+        "english": "Moon",
+        "oshikwanyama": "Ohani",
+        "category": "words",
+        "audio_file": "moon.wav"
+    },
+    {
+        "english": "I envy you",
+        "oshikwanyama": "Onda ofundo ove",
+        "category": "phrases",
+        "audio_file": "i_envy_you.wav"
+    },
+    {
+        "english": "How do you say ... in Oshiwambo",
+        "oshikwanyama": "Oha shi ufa nwa shike ... Moshiwambo",
+        "category": "phrases",
+        "audio_file": "how_do_you_say_in_oshiwambo.wav"
+    },
+    {
+        "english": "How old are you?",
+        "oshikwanyama": "Ouna edula ngapi?",
+        "category": "phrases",
+        "audio_file": "how_old_are_you.wav"
+    },
+    {
+        "english": "I am 22 years old",
+        "oshikwanyama": "Odina edula omulongo nambali mbali",
+        "category": "phrases",
+        "audio_file": "i_am_22_years_old.wav"
+    },
+    {
+        "english": "No meat",
+        "oshikwanyama": "Omkaga",
+        "category": "phrases",
+        "audio_file": "no_meat.wav"
+    },
+    {
+        "english": "Yesterday",
+        "oshikwanyama": "Onghela",
+        "category": "words",
+        "audio_file": "yesterday.wav"
+    },
+    {
+        "english": "I'm with my boyfriend",
+        "oshikwanyama": "Ondili ku nokauma okamati",
+        "category": "phrases",
+        "audio_file": "im_with_my_boyfriend.wav"
+    },
+    {
+        "english": "I will call tomorrow",
+        "oshikwanyama": "Ohandi ifana monugula",
+        "category": "phrases",
+        "audio_file": "i_will_call_tomorrow.wav"
+    },
+    {
+        "english": "I'm an adult",
+        "oshikwanyama": "Andi omokulunhu",
+        "category": "phrases",
+        "audio_file": "im_an_adult.wav"
+    },
+    {
+        "english": "Always",
+        "oshikwanyama": "Alushe",
+        "category": "words",
+        "audio_file": "always.wav"
+    },
+    {
+        "english": "I agree",
+        "oshikwanyama": "Onda dimina",
+        "category": "phrases",
+        "audio_file": "i_agree.wav"
+    },
+    {
+        "english": "I want take away",
+        "oshikwanyama": "Onda hala kufa po",
+        "category": "phrases",
+        "audio_file": "i_want_take_away.wav"
+    },
+    {
+        "english": "Because",
+        "oshikwanyama": "Shaashi",
+        "category": "words",
+        "audio_file": "because.wav"
+    },
+    {
+        "english": "Behave yourself",
+        "oshikwanyama": "Likwata nawa",
+        "category": "phrases",
+        "audio_file": "behave_yourself.wav"
+    },
+    {
+        "english": "but",
+        "oshikwanyama": "Ndele nee",
+        "category": "words",
+        "audio_file": "but.wav"
+    },
+    {
+        "english": "I am busy",
+        "oshikwanyama": "Onde li pyakadila",
+        "category": "phrases",
+        "audio_file": "i_am_busy.wav"
+    },
+    {
+        "english": "Good morning",
+        "oshikwanyama": "Walelepo",
+        "category": "phrases",
+        "audio_file": "good_morning.wav"
+    },
+    {
+        "english": "Good evening",
+        "oshikwanyama": "Owatokelwa po nawa",
+        "category": "phrases",
+        "audio_file": "good_evening.wav"
+    },
+    {
+        "english": "Bye",
+        "oshikwanyama": "Kalapo nawa",
+        "category": "words",
+        "audio_file": "bye.wav"
+    },
+    {
+        "english": "Thank you very much",
+        "oshikwanyama": "Tangi unene",
+        "category": "phrases",
+        "audio_file": "thank_you_very_much.wav"
+    },
+    {
+        "english": "Thank you",
+        "oshikwanyama": "Tangi",
+        "category": "phrases",
+        "audio_file": "thank_you.wav"
+    },
+    {
+        "english": "Look",
+        "oshikwanyama": "Tala",
+        "category": "words",
+        "audio_file": "look.wav"
+    },
+    {
+        "english": "I'm fine, and you?",
+        "oshikwanyama": "Ondili nawa, Ove?",
+        "category": "phrases",
+        "audio_file": "im_fine_and_you.wav"
+    },
+    {
+        "english": "My name is",
+        "oshikwanyama": "Edin lange aame",
+        "category": "phrases",
+        "audio_file": "my_name_is.wav"
+    },
+    {
+        "english": "Who is this?",
+        "oshikwanyama": "Olye ou",
+        "category": "phrases",
+        "audio_file": "who_is_this.wav"
+    },
+    {
+        "english": "I'm a driver",
+        "oshikwanyama": "Ame omushingi",
+        "category": "phrases",
+        "audio_file": "im_a_driver.wav"
+    },
+    {
+        "english": "Do you speak English?",
+        "oshikwanyama": "Ohopopi oshinglisha",
+        "category": "phrases",
+        "audio_file": "do_you_speak_english.wav"
+    },
+    {
+        "english": "A little bit",
+        "oshikwanyama": "Kashone ashike",
+        "category": "phrases",
+        "audio_file": "a_little_bit.wav"
+    },
+    {
+        "english": "Small",
+        "oshikwanyama": "Kashona",
+        "category": "words",
+        "audio_file": "small.wav"
+    },
+    {
+        "english": "Do you like it?",
+        "oshikwanyama": "Ou shi hole?",
+        "category": "phrases",
+        "audio_file": "do_you_like_it.wav"
+    },
+    {
+        "english": "I don't understand",
+        "oshikwanyama": "Kandi uditeko",
+        "category": "phrases",
+        "audio_file": "i_dont_understand.wav"
+    },
+    {
+        "english": "How many?",
+        "oshikwanyama": "Vangapi?",
+        "category": "phrases",
+        "audio_file": "how_many.wav"
+    },
+    {
+        "english": "What's this?",
+        "oshikwanyama": "Oshike eshi?",
+        "category": "phrases",
+        "audio_file": "whats_this.wav"
+    },
+    {
+        "english": "How much?",
+        "oshikwanyama": "Lingapi?",
+        "category": "phrases",
+        "audio_file": "how_much.wav"
+    },
+    {
+        "english": "I love you",
+        "oshikwanyama": "Ondikuhole",
+        "category": "phrases",
+        "audio_file": "i_love_you.wav"
+    },
+    {
+        "english": "I",
+        "oshikwanyama": "Onda",
+        "category": "words",
+        "audio_file": "i.wav"
+    },
+    {
+        "english": "Tomorrow",
+        "oshikwanyama": "Mongula",
+        "category": "words",
+        "audio_file": "tomorrow.wav"
+    },
+    {
+        "english": "Spoon",
+        "oshikwanyama": "Osindo",
+        "category": "words",
+        "audio_file": "spoon.wav"
+    },
+    {
+        "english": "Sleep",
+        "oshikwanyama": "Kofa",
+        "category": "words",
+        "audio_file": "sleep.wav"
+    },
+    {
+        "english": "Shoe",
+        "oshikwanyama": "Ongaku",
+        "category": "words",
+        "audio_file": "shoe.wav"
+    },
+    {
+        "english": "I'm thirsty",
+        "oshikwanyama": "Ondasa enota",
+        "category": "phrases",
+        "audio_file": "im_thirsty.wav"
+    },
+    {
+        "english": "I'm hungry",
+        "oshikwanyama": "Ondasa ondjala",
+        "category": "phrases",
+        "audio_file": "im_hungry.wav"
+    },
+    {
+        "english": "What's the time?",
+        "oshikwanyama": "Ongapi paife?",
+        "category": "phrases",
+        "audio_file": "whats_the_time.wav"
+    },
+    {
+        "english": "Watch",
+        "oshikwanyama": "Ovili",
+        "category": "words",
+        "audio_file": "watch.wav"
+    },
+    {
+        "english": "Sorry",
+        "oshikwanyama": "Ombili",
+        "category": "words",
+        "audio_file": "sorry.wav"
+    },
+    {
+        "english": "No",
+        "oshikwanyama": "Ahawe",
+        "category": "words",
+        "audio_file": "no.wav"
+    },
+    {
+        "english": "Yes",
+        "oshikwanyama": "Ee",
+        "category": "words",
+        "audio_file": "yes.wav"
+    },
+    {
+        "english": "I want",
+        "oshikwanyama": "Onda hala",
+        "category": "phrases",
+        "audio_file": "i_want.wav"
+    },
+    {
+        "english": "Bread",
+        "oshikwanyama": "Omboloto",
+        "category": "words",
+        "audio_file": "bread.wav"
+    },
+    {
+        "english": "What are you looking for?",
+        "oshikwanyama": "Oto kongo shike?",
+        "category": "phrases",
+        "audio_file": "what_are_you_looking_for.wav"
+    },
+    {
+        "english": "Come",
+        "oshikwanyama": "Ila",
+        "category": "words",
+        "audio_file": "come.wav"
+    },
+    {
+        "english": "Go",
+        "oshikwanyama": "Inda",
+        "category": "words",
+        "audio_file": "go.wav"
+    },
+    {
+        "english": "In",
+        "oshikwanyama": "Mu",
+        "category": "words",
+        "audio_file": "in.wav"
+    },
+    {
+        "english": "Pen",
+        "oshikwanyama": "Opena",
+        "category": "words",
+        "audio_file": "pen.wav"
+    },
+    {
+        "english": "Stars",
+        "oshikwanyama": "Onyofi",
+        "category": "words",
+        "audio_file": "stars.wav"
+    },
+    {
+        "english": "Moon",
+        "oshikwanyama": "Ohani",
+        "category": "words",
+        "audio_file": "moon.wav"
+    },
+    {
+        "english": "Bring",
+        "oshikwanyama": "Eta",
+        "category": "words",
+        "audio_file": "bring.wav"
+    },
+    {
+        "english": "I want to hug you",
+        "oshikwanyama": "Onda hala ndiku papatele",
+        "category": "phrases",
+        "audio_file": "i_want_to_hug_you.wav"
+    },
+    {
+        "english": "To ... you",
+        "oshikwanyama": "Ndiku",
+        "category": "phrases",
+        "audio_file": "to_you.wav"
+    },
+    {
+        "english": "important",
+        "oshikwanyama": "Kwame",
+        "category": "words",
+        "audio_file": "important.wav"
+    },
+    {
+        "english": "Me",
+        "oshikwanyama": "Nge",
+        "category": "words",
+        "audio_file": "me.wav"
+    },
+    {
+        "english": "Give me",
+        "oshikwanyama": "Kwafe nge",
+        "category": "words",
+        "audio_file": "give_me.wav"
+    },
+    {
+        "english": "Cool",
+        "oshikwanyama": "Aeshe",
+        "category": "words",
+        "audio_file": "cool.wav"
+    },
+    {
+        "english": "I can't deal",
+        "oshikwanyama": "Og aige wani",
+        "category": "phrases",
+        "audio_file": "i_cant_deal.wav"
+    },
+    {
+        "english": "Please",
+        "oshikwanyama": "Kwathange",
+        "category": "words",
+        "audio_file": "please.wav"
+    },
+    {
+        "english": "Meat",
+        "oshikwanyama": "Onyama",
+        "category": "words",
+        "audio_file": "meat.wav"
+    },
+    {
+        "english": "Okay",
+        "oshikwanyama": "Eewa",
+        "category": "words",
+        "audio_file": "okay.wav"
+    },
+    {
+        "english": "Spinach",
+        "oshikwanyama": "Ombidi",
+        "category": "words",
+        "audio_file": "spinach.wav"
+    },
+    {
+        "english": "I saw you",
+        "oshikwanyama": "Onde ku mona",
+        "category": "phrases",
+        "audio_file": "i_saw_you.wav"
+    },
+    {
+        "english": "Baby",
+        "oshikwanyama": "Okahanana",
+        "category": "words",
+        "audio_file": "baby.wav"
+    }
+]
