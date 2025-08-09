@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:oshiwambo_translator/viewmodels/phrases_vm.dart';
 
+
+bool isFav = false;
 class HomeEngToOshi extends StatefulWidget {
   const HomeEngToOshi({super.key});
 
@@ -10,6 +13,8 @@ class HomeEngToOshi extends StatefulWidget {
 class _HomeEngToOshiState extends State<HomeEngToOshi> {
   TextEditingController englishController = TextEditingController();
   String oshikwanyamaText = "";
+
+  late final PhraseViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -54,11 +59,16 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
                   ),
                   TextField(
                     controller: englishController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: "Type...",
                       border: InputBorder.none,
-                    ),
-                  ),
+                    ), textInputAction: TextInputAction.done,    // iOS/Android shows “Done”
+                        onSubmitted: (value) {                    // ENTER key on laptop/phone
+                            final phrase = viewModel.search(value); 
+                            setState(() {
+                                oshikwanyamaText = phrase?.oshikwanyama ?? 'Not found';
+                            });
+                        }),
                 ],
               ),
             ),
@@ -99,12 +109,17 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      IconButton(
-                        icon: Icon(Icons.star, color: Colors.pink[600]),
-                        onPressed: () {
-                          // Add to favourites
-                        },
-                      ),
+                        IconButton(
+                        icon: Icon(
+                            isFav ? Icons.star : Icons.star_border,   // filled vs outline
+                            color: Colors.pink[600],
+                        ),
+                    onPressed: () {
+                    setState(() => isFav = !isFav);
+                // TODO: add/remove from a shared favourites list
+                // e.g. appState.toggleFavourite(currentPhrase);
+                    },
+                ),
                       IconButton(
                         icon: Icon(Icons.volume_up, color: Colors.pink[600]),
                         onPressed: () {
@@ -124,12 +139,27 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildNavButton(Icons.home, () {
+                    setState(() {
+                        englishController.clear();
+                        oshikwanyamaText = '';
+                        isFav=false;
+                    });
                   // Navigate to home
                 }),
                 _buildNavButton(Icons.refresh, () {
+                    GestureDetector(
+                        onTap: () {
+                        Navigator.pushReplacementNamed(context, '/home_oshi');
+                    },
+                    child: Icon(Icons.swap_vert,color: Colors.pink[600]),
+                    )
                   // Swap translation direction
                 }),
                 _buildNavButton(Icons.star, () {
+                    GestureDetector(
+                        onTap: () {
+                        Navigator.pushReplacementNamed(context, '/home_oshi');
+                    });
                   // Go to favourites
                 }),
               ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oshiwambo_translator/viewmodels/phrases_vm.dart';
 
 class HomeOshiToEng extends StatefulWidget {
   const HomeOshiToEng({super.key});
@@ -10,6 +11,8 @@ class HomeOshiToEng extends StatefulWidget {
 class _HomeOshiToEngState extends State<HomeOshiToEng> {
   TextEditingController oshiController = TextEditingController();
   String englishText = "";
+
+  late final PhraseViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +61,12 @@ class _HomeOshiToEngState extends State<HomeOshiToEng> {
                       hintText: "Type...",
                       border: InputBorder.none,
                     ),
-                  ),
+                  onSubmitted: (value) {
+                    final phrase = viewModel.searchByOshikwanyama(value);
+                    setState(() {
+                      englishText = phrase?.english ?? 'Not found';
+                    });
+                  },),
                 ],
               ),
             ),
