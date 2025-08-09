@@ -76,9 +76,7 @@ class LoginScreen extends StatelessWidget {
             Align(
               alignment: Alignment.centerRight,
               child: GestureDetector(
-                onTap: () {
-                  // TODO: Navigate to forgot password screen
-                },
+                onTap: () => Navigator.pushNamed(context, '/forgot'),
                 child: const Text(
                   "Forgot Password ?",
                   style: TextStyle(color: Colors.pink),
@@ -90,9 +88,7 @@ class LoginScreen extends StatelessWidget {
 
             // Next button
             ElevatedButton(
-              onPressed: () {
-                // TODO: Authenticate and navigate
-              },
+              onPressed: () => Navigator.restorablePushReplacementNamed(context, '/home_eng'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink,
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -126,9 +122,7 @@ class LoginScreen extends StatelessWidget {
             // Create account link
             Center(
               child: GestureDetector(
-                onTap: () {
-                  // TODO: Navigate to create_account.dart
-                },
+                onTap: () =>Navigator.pushNamed(context, '/signup'),
                 child: const Text(
                   "Create a Account",
                   style: TextStyle(decoration: TextDecoration.underline),

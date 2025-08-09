@@ -140,9 +140,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed: () {
-                    // handle registration logic here
-                  },
+                  onPressed: () => Navigator.pushReplacementNamed(context, '/home_eng'),
                   child: const Text(
                     'Register',
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
@@ -158,9 +156,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 children: [
                   const Text("Already have an account? "),
                   GestureDetector(
-                    onTap: () {
-                      // Navigate to Login
-                    },
+                    onTap: () => Navigator.pushReplacementNamed(context, '/login'),
                     child: const Text(
                       "Login",
                       style: TextStyle(color: Colors.pink, fontWeight: FontWeight.bold),

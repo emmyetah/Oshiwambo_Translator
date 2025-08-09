@@ -102,9 +102,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                onPressed: () {
-                  // Add submit action
-                },
+                onPressed: () => Navigator.pushNamed(context, '/verify'),
                 child: Text(
                   'Submit',
                   style: TextStyle(fontSize: 16, color: Colors.white),

@@ -124,13 +124,13 @@ class _HomeOshiToEngState extends State<HomeOshiToEng> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildNavButton(Icons.home, () {
-                  // Navigate to home
+                  Navigator.pushNamed(context, '/home_eng');
                 }),
                 _buildNavButton(Icons.refresh, () {
-                  // Swap translation direction
+                  Navigator.pushNamed(context, '/home_ohi');
                 }),
                 _buildNavButton(Icons.star, () {
-                  // Go to favourites
+                  Navigator.pushNamed(context, '/favourites');
                 }),
               ],
             ),

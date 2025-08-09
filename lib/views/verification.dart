@@ -92,10 +92,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   backgroundColor: Colors.pink,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 ),
-                onPressed: () {
-                  // TODO: Add verification logic
-                  print("Entered code: $currentText");
-                },
+                onPressed: () => Navigator.pushReplacementNamed(context, '/home_eng'),
                 child: const Text("Submit", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               ),
             ),
