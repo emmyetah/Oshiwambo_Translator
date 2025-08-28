@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:oshiwambo_translator/viewmodels/phrases_vm.dart';
+import '../viewmodels/phrases_vm.dart';
 
-
-bool isFav = false;
 class HomeEngToOshi extends StatefulWidget {
   const HomeEngToOshi({super.key});
 
   @override
-  _HomeEngToOshiState createState() => _HomeEngToOshiState();
+  State<HomeEngToOshi> createState() => _HomeEngToOshiState();
 }
 
 class _HomeEngToOshiState extends State<HomeEngToOshi> {
-  TextEditingController englishController = TextEditingController();
-  String oshikwanyamaText = "";
+  final TextEditingController englishController = TextEditingController();
+  final PhraseViewModel viewModel = PhraseViewModel();
 
-  late final PhraseViewModel viewModel;
+  String oshikwanyamaText = '';
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel.loadPhrases().then((_) {
+      setState(() => _loaded = true);
+    });
+  }
+
+  void _translateEngToOshi(String value) {
+    if (!_loaded) return;
+    final phrase = viewModel.search(value);
+    setState(() {
+      oshikwanyamaText = phrase?.oshikwanyama ?? 'Not found';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +38,7 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Title
             Text(
               'Oshiwambo Translator',
               style: TextStyle(
@@ -34,152 +47,73 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
                 color: Colors.pink[600],
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-            // English Input Box
+            // English input
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
-                      'English',
-                      style: TextStyle(color: Colors.pink[600]),
-                    ),
+                    child: Text('English', style: TextStyle(color: Colors.pink[600])),
                   ),
                   TextField(
                     controller: englishController,
                     decoration: const InputDecoration(
-                      hintText: "Type...",
+                      hintText: 'Type...',
                       border: InputBorder.none,
-                    ), textInputAction: TextInputAction.done,    // iOS/Android shows “Done”
-                        onSubmitted: (value) {                    // ENTER key on laptop/phone
-                            final phrase = viewModel.search(value); 
-                            setState(() {
-                                oshikwanyamaText = phrase?.oshikwanyama ?? 'Not found';
-                            });
-                        }),
+                    ),
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: _translateEngToOshi, // ENTER key on laptop/iPhone
+                    onEditingComplete: () =>
+                        _translateEngToOshi(englishController.text),
+                  ),
                 ],
               ),
             ),
 
-            SizedBox(height: 10),
-            Divider(thickness: 1),
+            const SizedBox(height: 10),
+            const Divider(thickness: 1),
             Icon(Icons.swap_vert, color: Colors.pink[600]),
 
-            // Oshikwanyama Output Box
+            // Oshikwanyama output
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
-                      'Oshikwanyama',
-                      style: TextStyle(color: Colors.pink[600]),
-                    ),
+                    child: Text('Oshikwanyama', style: TextStyle(color: Colors.pink[600])),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    oshikwanyamaText.isEmpty
-                        ? ""
-                        : oshikwanyamaText,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                        IconButton(
-                        icon: Icon(
-                            isFav ? Icons.star : Icons.star_border,   // filled vs outline
-                            color: Colors.pink[600],
-                        ),
-                    onPressed: () {
-                    setState(() => isFav = !isFav);
-                // TODO: add/remove from a shared favourites list
-                // e.g. appState.toggleFavourite(currentPhrase);
-                    },
-                ),
-                      IconButton(
-                        icon: Icon(Icons.volume_up, color: Colors.pink[600]),
-                        onPressed: () {
-                          // Play audio
-                        },
-                      ),
-                    ],
+                    oshikwanyamaText,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
             ),
-
-            Spacer(),
-
-            // Bottom Navigation Icons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildNavButton(Icons.home, () {
-                    setState(() {
-                        englishController.clear();
-                        oshikwanyamaText = '';
-                        isFav=false;
-                    });
-                  // Navigate to home
-                }),
-                _buildNavButton(Icons.refresh, () {
-                    GestureDetector(
-                        onTap: () {
-                        Navigator.pushReplacementNamed(context, '/home_oshi');
-                    },
-                    child: Icon(Icons.swap_vert,color: Colors.pink[600]),
-                    )
-                  // Swap translation direction
-                }),
-                _buildNavButton(Icons.star, () {
-                    GestureDetector(
-                        onTap: () {
-                        Navigator.pushReplacementNamed(context, '/home_oshi');
-                    });
-                  // Go to favourites
-                }),
-              ],
-            ),
           ],
         ),
-      ),
-    );
-  }
-
-  // Helper widget for bottom navigation buttons
-  Widget _buildNavButton(IconData icon, VoidCallback onTap) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey[300],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: IconButton(
-        icon: Icon(icon, color: Colors.pink[600]),
-        onPressed: onTap,
       ),
     );
   }
