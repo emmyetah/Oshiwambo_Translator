@@ -8,9 +8,9 @@ class FavouritesScreen extends StatefulWidget {
 }
 
 class _FavouritesScreenState extends State<FavouritesScreen> {
-  // TODO: replace this with your real favourites source.
-  // If you want persistence, we can swap this to SharedPreferences later.
+  // Replace this with a shared/persisted source later.
   final List<Map<String, String>> _favs = [
+    // Example structure:
     // {'english': 'Thank you', 'osh': 'Tangi'},
     // {'english': 'Water', 'osh': 'Omeya'},
   ];
@@ -36,7 +36,7 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
             ),
             const SizedBox(height: 12),
 
-            // Big rounded "card" area
+            // Big rounded panel
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -91,13 +91,32 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
 
             const SizedBox(height: 20),
 
-            // Bottom nav buttons
+            // Bottom nav: Home / Refresh / Star
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _navBtn(icon: Icons.home, onTap: () {}),
-                _navBtn(icon: Icons.refresh, onTap: () {}),
-                _navBtn(icon: Icons.star, onTap: () {}),
+                _navBtn(
+                  icon: Icons.home,
+                  onTap: () {
+                    // Go straight to your default Home route
+                    Navigator.pushReplacementNamed(context, '/home_eng');
+                    // or to fully reset the stack:
+                    // Navigator.pushNamedAndRemoveUntil(context, '/home_eng', (route) => false);
+                  },
+                ),
+                _navBtn(
+                  icon: Icons.refresh,
+                  onTap: () {
+                    // Optional: reload or clear favourites; here we no-op
+                    setState(() {});
+                  },
+                ),
+                _navBtn(
+                  icon: Icons.star,
+                  onTap: () {
+                    // Already on favourites; no-op
+                  },
+                ),
               ],
             ),
           ],
@@ -111,13 +130,6 @@ class _FavouritesScreenState extends State<FavouritesScreen> {
       decoration: BoxDecoration(
         color: Colors.grey.shade300,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.pink.withOpacity(0.25),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: IconButton(
         icon: Icon(icon, color: Colors.pink[600]),
@@ -133,7 +145,7 @@ class _FavTile extends StatelessWidget {
   final VoidCallback onRemove;
 
   const _FavTile({
-    super.key,
+    //super.key,
     required this.english,
     required this.osh,
     required this.onRemove,
@@ -142,16 +154,19 @@ class _FavTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white, borderRadius: BorderRadius.circular(12)),
+      decoration:
+          BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12)),
       child: ListTile(
-        title: Text(english, style: const TextStyle(fontWeight: FontWeight.w600)),
+        title: Text(
+          english,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
         subtitle: Text(osh),
         trailing: IconButton(
+          tooltip: 'Remove from favourites',
           icon: const Icon(Icons.delete_outline),
           color: Colors.pink[600],
           onPressed: onRemove,
-          tooltip: 'Remove from favourites',
         ),
       ),
     );
