@@ -1,18 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:oshiwambo_translator/viewmodels/phrases_vm.dart';
+import '../viewmodels/phrases_vm.dart';
 
 class HomeOshiToEng extends StatefulWidget {
   const HomeOshiToEng({super.key});
 
   @override
-  _HomeOshiToEngState createState() => _HomeOshiToEngState();
+  State<HomeOshiToEng> createState() => _HomeOshiToEngState();
 }
 
 class _HomeOshiToEngState extends State<HomeOshiToEng> {
-  TextEditingController oshiController = TextEditingController();
-  String englishText = "";
+  final TextEditingController oshiController = TextEditingController();
+  final PhraseViewModel viewModel = PhraseViewModel();
 
-  late final PhraseViewModel viewModel;
+  String englishText = '';
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel.loadPhrases().then((_) {
+      setState(() => _loaded = true);
+    });
+  }
+
+  void _translateOshiToEng(String value) {
+    if (!_loaded) return;
+    final phrase = viewModel.searchByOshikwanyama(value);
+    setState(() {
+      englishText = phrase?.english ?? 'Not found';
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +38,7 @@ class _HomeOshiToEngState extends State<HomeOshiToEng> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Title
             Text(
               'Oshiwambo Translator',
               style: TextStyle(
@@ -32,112 +47,86 @@ class _HomeOshiToEngState extends State<HomeOshiToEng> {
                 color: Colors.pink[600],
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
 
-            // Oshikwanyama Input Box
+            // Oshikwanyama input
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
-                      'Oshikwanyama',
-                      style: TextStyle(color: Colors.pink[600]),
-                    ),
+                    child: Text('Oshikwanyama', style: TextStyle(color: Colors.pink[600])),
                   ),
                   TextField(
                     controller: oshiController,
-                    decoration: InputDecoration(
-                      hintText: "Type...",
+                    decoration: const InputDecoration(
+                      hintText: 'Type...',
                       border: InputBorder.none,
                     ),
-                  onSubmitted: (value) {
-                    final phrase = viewModel.searchByOshikwanyama(value);
-                    setState(() {
-                      englishText = phrase?.english ?? 'Not found';
-                    });
-                  },),
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: _translateOshiToEng,
+                    onEditingComplete: () =>
+                        _translateOshiToEng(oshiController.text),
+                    onTapOutside: (_) => FocusScope.of(context).unfocus(),
+                  ),
                 ],
               ),
             ),
 
-            SizedBox(height: 10),
-            Divider(thickness: 1),
+            const SizedBox(height: 10),
+            const Divider(thickness: 1),
             Icon(Icons.swap_vert, color: Colors.pink[600]),
 
-            // English Output Box
+            // English output
             Container(
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(12),
               ),
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Text(
-                      'English',
-                      style: TextStyle(color: Colors.pink[600]),
-                    ),
+                    child: Text('English', style: TextStyle(color: Colors.pink[600])),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    englishText.isEmpty
-                        ? ""
-                        : englishText,
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.star, color: Colors.pink[600]),
-                        onPressed: () {
-                          // Add to favourites
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.volume_up, color: Colors.pink[600]),
-                        onPressed: () {
-                          // Play audio
-                        },
-                      ),
-                    ],
+                    englishText,
+                    style: const TextStyle(fontSize: 16),
                   ),
                 ],
               ),
             ),
 
-            Spacer(),
+            const Spacer(),
 
-            // Bottom Navigation Icons
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildNavButton(Icons.home, () {
-                  Navigator.pushNamed(context, '/home_eng');
+                _navBtn(Icons.home, () {}),
+                _navBtn(Icons.refresh, () {
+                  setState(() {
+                    oshiController.clear();
+                    englishText = '';
+                  });
                 }),
-                _buildNavButton(Icons.refresh, () {
-                  Navigator.pushNamed(context, '/home_ohi');
-                }),
-                _buildNavButton(Icons.star, () {
+                _navBtn(Icons.star, () {
                   Navigator.pushNamed(context, '/favourites');
                 }),
               ],
@@ -148,8 +137,7 @@ class _HomeOshiToEngState extends State<HomeOshiToEng> {
     );
   }
 
-  // Helper widget for bottom navigation buttons
-  Widget _buildNavButton(IconData icon, VoidCallback onTap) {
+  Widget _navBtn(IconData icon, VoidCallback onTap) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey[300],
