@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../viewmodels/phrases_vm.dart';
+import '../models/phrases.dart';
+import '../state/app_state.dart';
 
 class HomeEngToOshi extends StatefulWidget {
   const HomeEngToOshi({super.key});
@@ -14,7 +18,9 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
 
   String oshikwanyamaText = '';
   bool _loaded = false;
-  bool isFav = false;
+
+  // Keep track of the currently translated phrase for favourites
+  Phrase? _currentPhrase;
 
   @override
   void initState() {
@@ -24,27 +30,33 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
     });
   }
 
-  void _translate(String value) {
+  Future<void> _translate(String value) async {
     if (!_loaded) return;
     final phrase = viewModel.search(value);
     setState(() {
+      _currentPhrase = phrase;
       oshikwanyamaText = phrase?.oshikwanyama ?? 'Not found';
-      // reset favourite on new result
-      isFav = false;
     });
+
+    // Make sure favourites page can display both langs for this key
+    if (phrase != null && mounted) {
+      await Provider.of<AppState>(context, listen: false).ensureStored(phrase);
+    }
   }
 
   void _reset() {
     setState(() {
       englishController.clear();
       oshikwanyamaText = '';
-      isFav = false;
+      _currentPhrase = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final pink = Colors.pink[600];
+    final appState = context.watch<AppState>();          // listen for fav changes
+    final isFav = appState.isFavourite(_currentPhrase);  // state-derived favourite
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -70,14 +82,14 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
                   border: InputBorder.none,
                 ),
                 textInputAction: TextInputAction.done,
-                onSubmitted: _translate,
+                onSubmitted: _translate, // ENTER/Return
                 onEditingComplete: () => _translate(englishController.text),
               ),
             ),
 
             const SizedBox(height: 10),
 
-            // Divider + swap arrows (tap to go to reverse page)
+            // Divider + swap arrows
             Row(
               children: [
                 const Expanded(child: Divider(thickness: 1)),
@@ -109,17 +121,22 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      // ⭐ Favourite toggle via AppState
                       IconButton(
                         tooltip: isFav ? 'Unfavourite' : 'Favourite',
-                        icon: Icon(isFav ? Icons.star : Icons.star_border,
-                            color: isFav ? pink : Colors.pink[600]),
-                        onPressed: () => setState(() => isFav = !isFav),
+                        icon: Icon(
+                          isFav ? Icons.star : Icons.star_border,
+                          color: isFav ? pink : Colors.grey,
+                        ),
+                        onPressed: () {
+                          appState.toggleFavourite(_currentPhrase);
+                        },
                       ),
                       IconButton(
                         tooltip: 'Play audio',
                         icon: Icon(Icons.volume_up, color: pink),
                         onPressed: () {
-                          // TODO: play audio for current phrase if available
+                          // TODO: play audio for _currentPhrase?.audioFile
                         },
                       ),
                     ],
@@ -130,12 +147,12 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
 
             const Spacer(),
 
-            // Bottom nav row: home / refresh / favourites
+            // Bottom nav: home / refresh / favourites
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _navBtn(icon: Icons.home, color: pink, onTap: () {
-                  // optional: navigate to a home hub
+                  // If you have a hub, navigate there. Otherwise stay.
                 }),
                 _navBtn(icon: Icons.refresh, color: pink, onTap: _reset),
                 _navBtn(icon: Icons.star, color: pink, onTap: () {
@@ -160,7 +177,7 @@ class _HomeEngToOshiState extends State<HomeEngToOshi> {
   }
 }
 
-/// Shared panel with consistent height to match Figma boxes
+/// Shared panel with consistent min height to match your Figma boxes
 class _LabeledPanel extends StatelessWidget {
   final String label;
   final Color labelColor;
@@ -175,8 +192,7 @@ class _LabeledPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // consistent look & size
-      constraints: const BoxConstraints(minHeight: 140), // <- adjust height here
+      constraints: const BoxConstraints(minHeight: 140),
       decoration: BoxDecoration(
         color: Colors.grey[300],
         borderRadius: BorderRadius.circular(12),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../viewmodels/phrases_vm.dart';
+import '../models/phrases.dart';
+import '../state/app_state.dart';
 
 class HomeOshiToEng extends StatefulWidget {
   const HomeOshiToEng({super.key});
@@ -14,7 +18,9 @@ class _HomeOshiToEngState extends State<HomeOshiToEng> {
 
   String englishText = '';
   bool _loaded = false;
-  bool isFav = false;
+
+  // Track current phrase for favourites
+  Phrase? _currentPhrase;
 
   @override
   void initState() {
@@ -24,26 +30,32 @@ class _HomeOshiToEngState extends State<HomeOshiToEng> {
     });
   }
 
-  void _translate(String value) {
+  Future<void> _translate(String value) async {
     if (!_loaded) return;
     final phrase = viewModel.searchByOshikwanyama(value);
     setState(() {
+      _currentPhrase = phrase;
       englishText = phrase?.english ?? 'Not found';
-      isFav = false;
     });
+
+    if (phrase != null && mounted) {
+      await Provider.of<AppState>(context, listen: false).ensureStored(phrase);
+    }
   }
 
   void _reset() {
     setState(() {
       oshiController.clear();
       englishText = '';
-      isFav = false;
+      _currentPhrase = null;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final pink = Colors.pink[600];
+    final appState = context.watch<AppState>();
+    final isFav = appState.isFavourite(_currentPhrase);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -57,7 +69,7 @@ class _HomeOshiToEngState extends State<HomeOshiToEng> {
             ),
             const SizedBox(height: 10),
 
-            // Oshikwanyama INPUT
+            // Oshi INPUT
             _LabeledPanel(
               label: 'Oshikwanyama',
               labelColor: pink!,
@@ -106,15 +118,19 @@ class _HomeOshiToEngState extends State<HomeOshiToEng> {
                     children: [
                       IconButton(
                         tooltip: isFav ? 'Unfavourite' : 'Favourite',
-                        icon: Icon(isFav ? Icons.star : Icons.star_border,
-                            color: isFav ? pink : Colors.pink[600]),
-                        onPressed: () => setState(() => isFav = !isFav),
+                        icon: Icon(
+                          isFav ? Icons.star : Icons.star_border,
+                          color: isFav ? pink : Colors.grey,
+                        ),
+                        onPressed: () {
+                          appState.toggleFavourite(_currentPhrase);
+                        },
                       ),
                       IconButton(
                         tooltip: 'Play audio',
                         icon: Icon(Icons.volume_up, color: pink),
                         onPressed: () {
-                          // TODO: play audio
+                          // TODO: play audio for _currentPhrase?.audioFile
                         },
                       ),
                     ],

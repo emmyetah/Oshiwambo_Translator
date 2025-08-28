@@ -20,4 +20,10 @@ factory Phrase.fromJson(Map<String,dynamic> json) {
   );
 }
 
+Map<String, dynamic> toJson() => {
+    'english': english,
+    'oshikwanyama': oshikwanyama,
+    'category': category,
+    'audio_file': audioFile,
+  };
 }

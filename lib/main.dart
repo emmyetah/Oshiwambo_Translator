@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'state/app_state.dart';
 
 import 'views/splash_screen.dart';
 import 'views/login.dart';
@@ -9,8 +11,14 @@ import 'views/home_engtooshi.dart';
 import 'views/home_oshitoeng.dart';
 import 'views/favourites.dart';
 
-void main() => runApp(const App());
-
+void main() {
+  runApp(
+  ChangeNotifierProvider(
+    create: (_) => AppState(),
+    child: const App(),
+  ),
+  );
+}
 class App extends StatelessWidget {
   const App({super.key});
 
