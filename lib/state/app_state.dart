@@ -1,3 +1,5 @@
+// lib/state/app_state.dart
+import 'dart:async'; // <-- needed for StreamSubscription
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,7 +12,7 @@ class AppState extends ChangeNotifier {
   bool _loaded = false;
   bool get loaded => _loaded;
 
-  // Firestore listener handle
+  // Firestore live sync
   Stream<QuerySnapshot<Map<String, dynamic>>>? _favStream;
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? _favSub;
   String? _currentUid;
@@ -19,7 +21,7 @@ class AppState extends ChangeNotifier {
     _loadLocal();
   }
 
-  // ---------------- Local persistence (for offline/startup) ----------------
+  // ---------------- Local (shared_preferences) ----------------
 
   Future<void> _loadLocal() async {
     final prefs = await SharedPreferences.getInstance();
@@ -27,7 +29,6 @@ class AppState extends ChangeNotifier {
     _favKeys
       ..clear()
       ..addAll(keys);
-    // Note: local map hydration happens after JSON is loaded in screens and ensureStored() is called.
     _loaded = true;
     notifyListeners();
   }
@@ -54,12 +55,10 @@ class AppState extends ChangeNotifier {
       ..sort((a, b) => a.english.compareTo(b.english));
   }
 
-  bool isFavourite(Phrase? p) =>
-      p != null && _favKeys.contains(p.english);
+  bool isFavourite(Phrase? p) => p != null && _favKeys.contains(p.english);
 
   // ---------------- Firestore attach/detach & migration ----------------
 
-  /// Attach to a user's favourites in Firestore and start live syncing.
   Future<void> attachUser(String uid) async {
     if (_currentUid == uid) return;
     await detachUser();
@@ -68,27 +67,29 @@ class AppState extends ChangeNotifier {
     final col = FirebaseFirestore.instance
         .collection('users')
         .doc(uid)
-        .collection('favourites')
-        .withConverter<Phrase>(
-          fromFirestore: (snap, _) => Phrase.fromJson(snap.data()!),
-          toFirestore: (p, _) => p.toJson(),
-        );
+        .collection('favourites');
 
     _favStream = col.snapshots();
     _favSub = _favStream!.listen((snap) async {
-      // Firestore is source of truth once attached.
+      // Firestore becomes source of truth once attached
       _favKeys
         ..clear()
         ..addAll(snap.docs.map((d) => d.id));
-      _favMap
-        ..clear()
-        ..addEntries(snap.docs.map((d) => MapEntry(d.id, d.data())));
+
+      _favMap.clear();
+      for (final d in snap.docs) {
+        final data = d.data(); // Map<String, dynamic>
+        // Defensive cast for safety:
+        final map = Map<String, dynamic>.from(data);
+        final phrase = Phrase.fromJson(map);
+        _favMap[d.id] = phrase;
+      }
+
       await _saveLocal(); // keep local cache in sync
       notifyListeners();
     });
   }
 
-  /// Stop listening to Firestore (on sign-out) and keep local cache.
   Future<void> detachUser() async {
     await _favSub?.cancel();
     _favSub = null;
@@ -106,14 +107,12 @@ class AppState extends ChangeNotifier {
     final existing = await col.get();
     final existingIds = existing.docs.map((d) => d.id).toSet();
 
-    // Upload any local favs not in cloud yet (use hydrated data if present)
     for (final key in _favKeys) {
       if (!existingIds.contains(key)) {
         final p = _favMap[key];
         if (p != null) {
           await col.doc(key).set(p.toJson());
         } else {
-          // Fallback minimal doc if phrase not hydrated yet
           await col.doc(key).set({
             'english': key,
             'oshikwanyama': '',
@@ -125,12 +124,12 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  // ---------------- Toggle favourite (updates local + cloud) ----------------
+  // ---------------- Toggle favourite (local + cloud) ----------------
 
   Future<void> toggleFavourite(Phrase? p) async {
     if (p == null) return;
 
-    // Local update first for snappy UX
+    // Local optimistic update
     if (_favKeys.contains(p.english)) {
       _favKeys.remove(p.english);
       _favMap.remove(p.english);
@@ -157,7 +156,6 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// For explicit removals in UI list
   Future<void> removeByKey(String englishKey) async {
     _favKeys.remove(englishKey);
     _favMap.remove(englishKey);
