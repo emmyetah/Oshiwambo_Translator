@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "119815104954",
+    "project_id": "oshiwambo-translator-3f37d",
+    "storage_bucket": "oshiwambo-translator-3f37d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:119815104954:android:89504707e1c668d871d583",
+        "android_client_info": {
+          "package_name": "com.example.oshiwambo_translator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "119815104954-cl092u6kl3nhc9i3gr3oc8e7he4con9e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSITs6CVPaA-BO5drHfKjDz7x6mFKIdb4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "119815104954-cl092u6kl3nhc9i3gr3oc8e7he4con9e.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
