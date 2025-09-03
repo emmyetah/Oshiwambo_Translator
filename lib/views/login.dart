@@ -1,6 +1,8 @@
+// lib/views/login.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../state/auth_state.dart';
+import '../state/app_state.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -21,6 +23,19 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Future<void> _postLoginSync() async {
+    final auth = context.read<AuthState>();
+    final app = context.read<AppState>();
+    final uid = auth.user?.uid;
+    if (uid == null) return;
+
+    // 1) Attach live Firestore sync
+    await app.attachUser(uid);
+
+    // 2) One-time migrate any local favourites up to Firestore
+    await app.migrateLocalToCloudIfNeeded(uid);
+  }
+
   Future<void> _signInWithEmail() async {
     final auth = context.read<AuthState>();
     setState(() => _loading = true);
@@ -29,6 +44,10 @@ class _LoginScreenState extends State<LoginScreen> {
         emailController.text.trim(),
         passwordController.text.trim(),
       );
+
+      // 🔗 Firestore favourites sync
+      await _postLoginSync();
+
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/home_eng');
       }
@@ -44,6 +63,10 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _loading = true);
     try {
       await auth.signInWithGoogle();
+
+      // 🔗 Firestore favourites sync
+      await _postLoginSync();
+
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/home_eng');
       }
@@ -151,13 +174,17 @@ class _LoginScreenState extends State<LoginScreen> {
             _socialButton(
               label: "Continue with Apple",
               icon: Icons.apple,
-              onPressed: () {}, // TODO: add Apple sign-in later
+              onPressed: () {
+                // TODO: add Apple sign-in later (needs iOS setup)
+              },
             ),
             const SizedBox(height: 12),
             _socialButton(
               label: "Continue with Facebook",
               icon: Icons.facebook,
-              onPressed: () {}, // TODO: add Facebook sign-in later
+              onPressed: () {
+                // TODO: add Facebook sign-in later
+              },
             ),
 
             const SizedBox(height: 24),
@@ -201,4 +228,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
