@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:provider/provider.dart';
+import '../state/auth_state.dart';
 
 class VerificationScreen extends StatefulWidget {
   const VerificationScreen({super.key});
@@ -9,92 +10,95 @@ class VerificationScreen extends StatefulWidget {
 }
 
 class _VerificationScreenState extends State<VerificationScreen> {
-  String currentText = "";
+  bool _checking = false;
+  bool _sending = false;
+
+  void _show(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  Future<void> _resend() async {
+    setState(() => _sending = true);
+    try {
+      await context.read<AuthState>().resendVerificationEmail();
+      _show('Verification email sent. Please check your inbox.');
+    } catch (e) {
+      _show('Failed to send verification email: $e');
+    } finally {
+      setState(() => _sending = false);
+    }
+  }
+
+  Future<void> _checkVerified() async {
+    setState(() => _checking = true);
+    try {
+      final user = await context.read<AuthState>().reloadUser();
+      if (user != null && user.emailVerified) {
+        if (mounted) {
+          _show('Email verified!');
+          Navigator.pushNamedAndRemoveUntil(context, '/home_eng', (_) => false);
+        }
+      } else {
+        _show('Not verified yet — please check your email.');
+      }
+    } catch (e) {
+      _show('Could not check verification: $e');
+    } finally {
+      setState(() => _checking = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final pink = Colors.pink;
+
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: const BackButton(color: Colors.black),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text(
-          'Forgot Password',
-          style: TextStyle(color: Colors.black),
-        ),
+        backgroundColor: Colors.white, elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text('Verify your email', style: TextStyle(color: Colors.black)),
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Email icon
-            Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: Colors.pink.shade50,
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(Icons.email_outlined, color: Colors.pink, size: 36),
-            ),
-            const SizedBox(height: 20),
-
-            // Title
             const Text(
-              "Check your Email",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              "We've sent a verification link to your email.\nOpen it and then tap Continue.",
+              style: TextStyle(color: Colors.black),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 24),
 
-            // Subtext
-            const Text(
-              "We sent a code to yourname@gmail.com",
-              style: TextStyle(fontSize: 14, color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 30),
-
-            // Pin Code Field
-            PinCodeTextField(
-              appContext: context,
-              length: 4,
-              obscureText: false,
-              animationType: AnimationType.fade,
-              textStyle: const TextStyle(fontSize: 20),
-              pinTheme: PinTheme(
-                shape: PinCodeFieldShape.box,
-                borderRadius: BorderRadius.circular(8),
-                fieldHeight: 55,
-                fieldWidth: 50,
-                inactiveColor: Colors.pink,
-                selectedColor: Colors.pinkAccent,
-                activeColor: Colors.pink,
+            ElevatedButton(
+              onPressed: _checking ? null : _checkVerified,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: pink,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              animationDuration: const Duration(milliseconds: 300),
-              onChanged: (value) {
-                setState(() {
-                  currentText = value;
-                });
-              },
-              onCompleted: (value) {
-                // Optional: auto-submit or verify
-              },
+              child: _checking
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Continue'),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 12),
 
-            // Submit Button
-            SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pink,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-                onPressed: () => Navigator.pushReplacementNamed(context, '/home_eng'),
-                child: const Text("Submit", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            OutlinedButton(
+              onPressed: _sending ? null : _resend,
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.grey),
+                padding: const EdgeInsets.symmetric(vertical: 14),
               ),
+              child: _sending
+                  ? const SizedBox(height: 18, width: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Text('Resend verification email', style: TextStyle(color: Colors.black)),
+            ),
+
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false),
+              child: const Text('Back to Login', style: TextStyle(color: Colors.black)),
             ),
           ],
         ),

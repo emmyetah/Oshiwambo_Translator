@@ -1,113 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../state/auth_state.dart';
 
-class ForgotPasswordScreen extends StatelessWidget {
+class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
+}
+
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final TextEditingController emailController = TextEditingController();
+  bool _loading = false;
+
+  void _show(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  Future<void> _sendReset() async {
+    final email = emailController.text.trim();
+    if (email.isEmpty) {
+      _show('Please enter your email.');
+      return;
+    }
+    setState(() => _loading = true);
+    try {
+      await context.read<AuthState>().sendPasswordReset(email);
+      _show('Password reset email sent. Check your inbox.');
+      if (mounted) Navigator.pop(context);
+    } catch (e) {
+      _show('Failed to send reset email: $e');
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final pink = Colors.pink;
+
     return Scaffold(
-      backgroundColor: Colors.white, // makes the whole background white
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          'Forgot Password',
-          style: TextStyle(color: Colors.black, fontSize: 16),
-        ),
+        backgroundColor: Colors.white, elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text('Forgot Password', style: TextStyle(color: Colors.black)),
         centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(20),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            SizedBox(height: 20),
-            // Center background logo (optional)
-            Opacity(
-              opacity: 0.1,
-              child: Icon(Icons.wb_sunny, size: 120, color: Colors.pink),
+            const Text(
+              'Enter your email and we\'ll send you a reset link.',
+              style: TextStyle(color: Colors.black),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 16),
 
-            // Title
-            Text(
-              'Set New Password',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 8),
-
-            Text(
-              'Your new password must be different\nfrom previously used passwords.',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 20),
-
-            // New Password Field
             TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'New Password*',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                labelStyle: TextStyle(color: Colors.black),
+                border: OutlineInputBorder(),
               ),
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 24),
 
-            // Confirm Password Field
-            TextField(
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Confirm Password*',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+            ElevatedButton(
+              onPressed: _loading ? null : _sendReset,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: pink,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-            ),
-            SizedBox(height: 15),
-
-            // Password Rules
-            Row(
-              children: [
-                Icon(Icons.check_circle, size: 16, color: Colors.pink),
-                SizedBox(width: 8),
-                Text('Must be at least 8 characters'),
-              ],
-            ),
-            SizedBox(height: 5),
-            Row(
-              children: [
-                Icon(Icons.check_circle, size: 16, color: Colors.pink),
-                SizedBox(width: 8),
-                Text('Must contain one special character'),
-              ],
-            ),
-            SizedBox(height: 25),
-
-            // Submit Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pink,
-                  padding: EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                onPressed: () => Navigator.pushNamed(context, '/verify'),
-                child: Text(
-                  'Submit',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
-              ),
+              child: _loading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text('Send reset link'),
             ),
           ],
         ),

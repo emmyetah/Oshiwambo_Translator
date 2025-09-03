@@ -9,7 +9,6 @@ class AuthState extends ChangeNotifier {
   Stream<User?> get changes => _auth.authStateChanges();
 
   AuthState() {
-    // Rebuild listeners on auth change
     changes.listen((_) => notifyListeners());
   }
 
@@ -20,18 +19,40 @@ class AuthState extends ChangeNotifier {
     return _auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
-  Future<UserCredential> signUpWithEmail(String email, String password) {
-    return _auth.createUserWithEmailAndPassword(email: email, password: password);
+  Future<UserCredential> signUpWithEmail(String email, String password) async {
+    final cred = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    // Send verification email (optional but recommended)
+    await cred.user?.sendEmailVerification();
+    return cred;
   }
 
-  // Google Sign-In (Android/Web; iOS when configured)
+  Future<void> sendPasswordReset(String email) {
+    return _auth.sendPasswordResetEmail(email: email);
+  }
+
+  Future<void> resendVerificationEmail() async {
+    final u = _auth.currentUser;
+    if (u != null && !u.emailVerified) {
+      await u.sendEmailVerification();
+    }
+  }
+
+  // Refresh user from server (needed to read updated emailVerified)
+  Future<User?> reloadUser() async {
+    final u = _auth.currentUser;
+    await u?.reload();
+    return _auth.currentUser;
+  }
+
+  // Google Sign-In
   Future<UserCredential> signInWithGoogle() async {
     if (kIsWeb) {
       final googleProvider = GoogleAuthProvider();
       return _auth.signInWithPopup(googleProvider);
     } else {
       final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication gAuth = await gUser!.authentication;
+      if (gUser == null) throw Exception('Google sign-in aborted');
+      final GoogleSignInAuthentication gAuth = await gUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: gAuth.accessToken,
         idToken: gAuth.idToken,
@@ -39,7 +60,4 @@ class AuthState extends ChangeNotifier {
       return _auth.signInWithCredential(credential);
     }
   }
-
-  // (Later) Apple Sign-In: use sign_in_with_apple + OAuth with Firebase
-  // (Later) Facebook: use flutter_facebook_auth + Firebase
 }
