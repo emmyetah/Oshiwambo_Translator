@@ -1,133 +1,183 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../state/auth_state.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  bool _loading = false;
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  Future<void> _signInWithEmail() async {
+    final auth = context.read<AuthState>();
+    setState(() => _loading = true);
+    try {
+      await auth.signInWithEmail(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home_eng');
+      }
+    } catch (e) {
+      _showError("Login failed: $e");
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    final auth = context.read<AuthState>();
+    setState(() => _loading = true);
+    try {
+      await auth.signInWithGoogle();
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home_eng');
+      }
+    } catch (e) {
+      _showError("Google sign-in failed: $e");
+    } finally {
+      setState(() => _loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Sun logo + App name
-            Center(
-              child: Column(
-                children: [
-                  Opacity(
-                    opacity: 0.15,
-                    child: Image.asset(
-                      'assets/images/sun.png',
-                      width: 120,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "Oshiwambo Translator",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.pink[700],
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "Login",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+            const SizedBox(height: 50),
+
+            // App Title
+            const Text(
+              "Oshiwambo Translator",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+                color: Colors.pink,
               ),
             ),
-
             const SizedBox(height: 32),
 
-            // Email field
-            const Text("Email"),
-            const SizedBox(height: 8),
-            const TextField(
-              decoration: InputDecoration(
-                hintText: "Enter your email",
+            // Email
+            TextField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: "Email",
+                labelStyle: TextStyle(color: Colors.black),
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 16),
 
-            // Password field
-            const Text("Password"),
-            const SizedBox(height: 8),
-            const TextField(
+            // Password
+            TextField(
+              controller: passwordController,
               obscureText: true,
-              decoration: InputDecoration(
-                hintText: "********",
+              decoration: const InputDecoration(
+                labelText: "Password",
+                labelStyle: TextStyle(color: Colors.black),
                 border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.visibility),
               ),
             ),
-
             const SizedBox(height: 8),
 
-            // Forgot password link
+            // Forgot Password
             Align(
               alignment: Alignment.centerRight,
               child: GestureDetector(
                 onTap: () => Navigator.pushNamed(context, '/forgot'),
                 child: const Text(
-                  "Forgot Password ?",
+                  "Forgot Password?",
                   style: TextStyle(color: Colors.pink),
                 ),
               ),
             ),
+            const SizedBox(height: 24),
 
-            const SizedBox(height: 16),
-
-            // Next button
+            // Login Button
             ElevatedButton(
-              onPressed: () => Navigator.restorablePushReplacementNamed(context, '/home_eng'),
+              onPressed: _loading ? null : _signInWithEmail,
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.pink,
+                foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
-              child: const Text("NEXT"),
+              child: _loading
+                  ? const CircularProgressIndicator(color: Colors.white)
+                  : const Text("NEXT"),
             ),
 
             const SizedBox(height: 24),
 
-            // OR separator
+            // Divider
             Row(
               children: const [
-                Expanded(child: Divider()),
+                Expanded(child: Divider(color: Colors.grey)),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 8),
-                  child: Text("Or"),
+                  child: Text("Or", style: TextStyle(color: Colors.black)),
                 ),
-                Expanded(child: Divider()),
+                Expanded(child: Divider(color: Colors.grey)),
               ],
             ),
+            const SizedBox(height: 24),
 
-            const SizedBox(height: 16),
+            // Social login buttons
+            _socialButton(
+              label: "Continue with Google",
+              icon: Icons.g_mobiledata,
+              onPressed: _signInWithGoogle,
+            ),
+            const SizedBox(height: 12),
+            _socialButton(
+              label: "Continue with Apple",
+              icon: Icons.apple,
+              onPressed: () {}, // TODO: add Apple sign-in later
+            ),
+            const SizedBox(height: 12),
+            _socialButton(
+              label: "Continue with Facebook",
+              icon: Icons.facebook,
+              onPressed: () {}, // TODO: add Facebook sign-in later
+            ),
 
-            // Social buttons
-            _socialButton("Continue with Apple", "apple"),
-            _socialButton("Continue with Google", "google"),
-            _socialButton("Continue with Facebook", "facebook"),
+            const SizedBox(height: 24),
 
-            const SizedBox(height: 16),
-
-            // Create account link
-            Center(
-              child: GestureDetector(
-                onTap: () =>Navigator.pushNamed(context, '/signup'),
-                child: const Text(
-                  "Create a Account",
-                  style: TextStyle(decoration: TextDecoration.underline),
+            // Sign up link
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text("Don’t have an account? ", style: TextStyle(color: Colors.black)),
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, '/signup'),
+                  child: const Text(
+                    "Sign up",
+                    style: TextStyle(
+                      color: Colors.pink,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
           ],
         ),
@@ -135,39 +185,20 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  // Widget helper for social buttons
-  Widget _socialButton(String label, String iconName) {
-    IconData icon;
-    switch (iconName) {
-      case "apple":
-        icon = Icons.apple;
-        break;
-      case "google":
-        icon = Icons.g_mobiledata;
-        break;
-      case "facebook":
-        icon = Icons.facebook;
-        break;
-      default:
-        icon = Icons.login;
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: OutlinedButton.icon(
-        onPressed: () {
-          // TODO: Implement auth
-        },
-        icon: Icon(icon),
-        label: Text(label),
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          side: const BorderSide(color: Colors.grey),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-        ),
+  Widget _socialButton({
+    required String label,
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    return OutlinedButton.icon(
+      onPressed: _loading ? null : onPressed,
+      icon: Icon(icon, color: Colors.black),
+      label: Text(label, style: const TextStyle(color: Colors.black)),
+      style: OutlinedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 14),
+        side: const BorderSide(color: Colors.grey),
       ),
     );
   }
 }
+
