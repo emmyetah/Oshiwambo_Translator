@@ -112,6 +112,7 @@ class FavouritesScreen extends StatelessWidget {
     );
   }
 
+
   Widget _navBtn({required IconData icon, required VoidCallback onTap}) {
     return Container(
       decoration: BoxDecoration(
